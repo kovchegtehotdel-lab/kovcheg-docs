@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ковчег · Система управления мероприятиями</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7f9fc;
+            color: #1a2b3e;
+            line-height: 1.5;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px -10px rgba(0,20,30,0.15);
+            overflow: hidden;
+            padding: 2.5rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #1e3c5c, #2b5b8b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .subhead {
+            font-size: 1.2rem;
+            color: #4a5f73;
+            margin-bottom: 2rem;
+            border-left: 4px solid #8ab3cf;
+            padding-left: 1.2rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background: #f8fafd;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #e2e9f2;
+            transition: 0.2s;
+        }
+
+        .card:hover {
+            border-color: #b6cde0;
+            background: #ffffff;
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge {
+            background: #d4e0f0;
+            color: #1e3c5c;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .role-list {
+            list-style: none;
+        }
+
+        .role-list li {
+            margin-bottom: 0.75rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .role-list li::before {
+            content: "•";
+            color: #2b5b8b;
+            font-weight: bold;
+            position: absolute;
+            left: 0.2rem;
+        }
+
+        .color-tag {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+            margin-right: 0.5rem;
+        }
+
+        .schema-block {
+            background: #eef3f9;
+            border-radius: 1.2rem;
+            padding: 1.8rem;
+            margin: 2rem 0;
+            border: 1px dashed #8aa9c9;
+        }
+
+        .two-col {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .col {
+            flex: 1 1 300px;
+            background: #f3f7fb;
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+        }
+
+        .col h4 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid white;
+            padding-bottom: 0.5rem;
+        }
+
+        .badge-alpha {
+            background: #2b5b8b;
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-beta {
+            background: #6b8f7c;
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+
+        .matrix {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            font-size: 0.95rem;
+        }
+
+        .matrix-row {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            align-items: baseline;
+            gap: 0.5rem;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid #dae2ec;
+        }
+
+        .matrix-role {
+            font-weight: 600;
+            color: #1a3b55;
+        }
+
+        .timeline {
+            margin: 2.5rem 0;
+        }
+
+        .stage {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+            align-items: flex-start;
+        }
+
+        .stage-number {
+            background: #1e3c5c;
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .stage-content {
+            flex: 1;
+            background: #f4f9ff;
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+        }
+
+        .stage-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stage-participants {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .participant {
+            background: white;
+            border-radius: 30px;
+            padding: 0.2rem 1rem 0.2rem 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.9rem;
+            border: 1px solid #cbdbe9;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 10px;
+            margin-right: 0.4rem;
+            display: inline-block;
+        }
+
+        .footer-note {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e0eaf3;
+            font-size: 0.9rem;
+            color: #4e6b85;
+            text-align: center;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #dbe4ee;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>⚓︎ Ковчег · Управление мероприятиями</h1>
+    <div class="subhead">Единая система ролей, этапов и двух таблиц (Альфа / Бета)</div>
+
+    <!-- Ключевая схема взаимосвязей (визуальная) -->
+    <div class="schema-block">
+        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+            <div style="background: #2b5b8b; color: white; border-radius: 2rem; padding: 1rem 2rem; font-weight: 600;">Анастасия<br><span style="font-size:0.8rem;">руководитель</span></div>
+            <div style="font-size:2rem; color:#7f9fbb;">⇅</div>
+            <div style="background: #3f799e; color: white; border-radius: 2rem; padding: 1rem 2rem; font-weight: 600;">Надежда<br><span style="font-size:0.8rem;">конц. директор</span></div>
+            <div style="font-size:2rem; color:#7f9fbb;">⇅</div>
+            <div style="background: #5d7e9c; color: white; border-radius: 2rem; padding: 1rem 2rem; font-weight: 600;">Константин<br><span style="font-size:0.8rem;">тех. директор</span></div>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; margin: 2rem 0 1rem;">
+            <div style="text-align:center; background: #f0f3f8; border-radius: 2rem; padding: 1rem 2rem; min-width: 180px;">
+                <div style="font-weight:700;">📋 Таблица АЛЬФА</div>
+                <div style="font-size:0.8rem;">финансы · юристы · договоры</div>
+                <div style="font-size:0.75rem; color:#4a5f73;">доступ: Надежда, Анастасия, Константин, юрист, бухгалтер</div>
+            </div>
+            <div style="text-align:center; background: #e4f1ea; border-radius: 2rem; padding: 1rem 2rem; min-width: 180px;">
+                <div style="font-weight:700;">📋 Таблица БЕТА</div>
+                <div style="font-size:0.8rem;">операционка · райдеры · контент</div>
+                <div style="font-size:0.75rem; color:#4a5f73;">доступ: все сотрудники (РП, админы, Ольга)</div>
+            </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem;">
+            <span class="participant" style="background:#fff0d9;"><span class="dot" style="background:#c99d5e;"></span>РП (рук. проектов)</span>
+            <span class="participant" style="background:#d9e9ff;"><span class="dot" style="background:#3870a0;"></span>Ольга (реклама/SMM)</span>
+            <span class="participant" style="background:#ffecdd;"><span class="dot" style="background:#b16f4a;"></span>Инна, Наталья (админы)</span>
+            <span class="participant" style="background:#e0e7ff;"><span class="dot" style="background:#4f62b0;"></span>Техники (звук/свет/видео)</span>
+        </div>
+        <p style="text-align:center; margin-top:1.5rem; font-weight:500;">Альфа ⤍ стратегия, бюджет, договоры · Бета ⤍ исполнение, сроки, задачи</p>
+    </div>
+
+    <!-- Краткое описание ролей (карточки) -->
+    <div class="card-grid">
+        <div class="card">
+            <h3>🟢 Анастасия <span class="badge">руководитель</span></h3>
+            <ul class="role-list">
+                <li>Участвует в переговорах по ключевым проектам (миссия, ценности).</li>
+                <li>Принимает стратегические решения.</li>
+                <li>Контролирует таблицу АЛЬФА (финансовая картина).</li>
+                <li><em>Не погружается в операционку и согласование афиш.</em></li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>🔵 Надежда <span class="badge">конц. директор</span></h3>
+            <ul class="role-list">
+                <li>Переговоры, условия, программа, даты.</li>
+                <li>Определяет рекламную стратегию (А, Б, В, Г).</li>
+                <li>Ведёт таблицу АЛЬФА (договоры, финансы, гастрольные).</li>
+                <li>Лично заводит билеты в TicketPro и устанавливает цены.</li>
+                <li>Назначает РП в таблице БЕТА, передаёт заказчика.</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>⚙️ Константин <span class="badge">тех. директор</span></h3>
+            <ul class="role-list">
+                <li>На переговорах — техэкспертиза (возможно / нужно оборудование).</li>
+                <li>Заполняет техрайдер, тайминг, назначает техперсонал (БЕТА).</li>
+                <li>Контролирует подготовку контента для LED-экрана и сложных задач.</li>
+                <li>В АЛЬФЕ отслеживает фактические техзатраты.</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>🧑‍💼 РП (рук. проектов) <span class="badge">новый / Инна</span></h3>
+            <ul class="role-list">
+                <li>После назначения Надеждой — главное лицо по операционке.</li>
+                <li>Собирает документы (для гастрольного) и контент (тексты, фото).</li>
+                <li>Ставит ТЗ дизайнерам, проверяет макеты (логотипы, форматы).</li>
+                <li>Координирует администраторов (реквизит, уборка, встреча).</li>
+                <li>В день мероприятия — «хозяин»: встреча, быт, тайминг.</li>
+                <li>Работает только в БЕТА, в АЛЬФУ доступа нет.</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>📢 Ольга <span class="badge">реклама / SMM</span></h3>
+            <ul class="role-list">
+                <li>Получает от Надежды стратегию (тип А/Б/В/Г) и бюджет.</li>
+                <li>От РП получает готовый контент (афиши, видео).</li>
+                <li>Создаёт контент-план, посты, розыгрыши, таргет.</li>
+                <li>Может привлекать видеографа, брать интервью.</li>
+                <li>Не занимается документами и техникой.</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>🧹 Администраторы <span class="badge">Инна, Наталья</span></h3>
+            <ul class="role-list">
+                <li>Инна: билетёры, кассиры, встреча зрителей.</li>
+                <li>Наталья: состояние здания, уборка, реквизит.</li>
+                <li>Получают задачи от РП через БЕТА.</li>
+                <li>Отмечают выполнение в таблице.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Две таблицы: Альфа и Бета (подробно) -->
+    <hr>
+    <h2 style="margin-bottom: 1rem;">📁 Два главных документа</h2>
+    <div class="two-col">
+        <div class="col">
+            <div class="badge-alpha">🔒 АЛЬФА (финансово‑юридическая)</div>
+            <p><strong>Доступ:</strong> Надежда, Анастасия, Константин, юрист, бухгалтер.</p>
+            <p><strong>Содержит:</strong></p>
+            <ul style="margin-left:1.2rem;">
+                <li>предмет договора, условия, доли, затраты;</li>
+                <li>контроль оплат, статус договора, гастрольное;</li>
+                <li>отметки юриста и бухгалтера.</li>
+            </ul>
+            <p><strong>Кто ведёт:</strong> Надежда (при участии юриста). Константин вносит техзатраты.</p>
+            <p style="margin-top:1rem;"><em>«Святая святых» — экономика и право.</em></p>
+        </div>
+        <div class="col">
+            <div class="badge-beta">📋 БЕТА (операционная)</div>
+            <p><strong>Доступ:</strong> все сотрудники (администраторы, техники, РП, Ольга, Надежда, Константин).</p>
+            <p><strong>Содержит:</strong></p>
+            <ul style="margin-left:1.2rem;">
+                <li>дата, название, локация, техрайдер, тайминг;</li>
+                <li>назначенный РП, тип рекламной стратегии;</li>
+                <li>заметки для админов (реквизит, стулья);</li>
+                <li>статусы готовности контента, рекламы, администрирования.</li>
+            </ul>
+            <p><strong>Кто заполняет:</strong> Надежда (первично), Константин (техники), РП (статусы), администраторы (отметки).</p>
+            <p><em>«Пульт управления» каждым мероприятием.</em></p>
+        </div>
+    </div>
+    <p style="background:#f4f7fb; padding:1rem; border-radius:1rem; margin-top:1rem;"><strong>Связка:</strong> Бета кормит Альфу фактами (даты, состав, техзатраты). Альфа кормит Бету статусом «договор подписан — можно работать».</p>
+
+    <!-- Жизненный цикл мероприятия (этапы и кто в какой момент) -->
+    <hr>
+    <h2>🗓️ Жизненный цикл мероприятия (кто и когда)</h2>
+    <div class="timeline">
+        <div class="stage">
+            <div class="stage-number">1</div>
+            <div class="stage-content">
+                <div class="stage-title">Переговоры, стратегия</div>
+                <div><strong>Участвуют:</strong> Анастасия, Надежда, Константин (оценка). Надежда фиксирует итог в БЕТА (тип А/Б/В/Г, дата, название).</div>
+                <div class="stage-participants"><span class="participant"><span class="dot" style="background:#2b5b8b;"></span>Анастасия</span><span class="participant"><span class="dot" style="background:#3f799e;"></span>Надежда</span><span class="participant"><span class="dot" style="background:#5d7e9c;"></span>Константин</span></div>
+            </div>
+        </div>
+        <div class="stage">
+            <div class="stage-number">2</div>
+            <div class="stage-content">
+                <div class="stage-title">Назначение РП и сбор данных</div>
+                <div>Надежда назначает в БЕТА ответственного РП. РП связывается с заказчиком, собирает пакет документов (для гастрольного) и контент.</div>
+                <div class="stage-participants"><span class="participant"><span class="dot" style="background:#c99d5e;"></span>РП</span><span class="participant"><span class="dot" style="background:#3f799e;"></span>Надежда (курирует)</span></div>
+            </div>
+        </div>
+        <div class="stage">
+            <div class="stage-number">3</div>
+            <div class="stage-content">
+                <div class="stage-title">Гастрольное удостоверение + договор</div>
+                <div>Надежда получает документы от РП, оформляет гастрольное, готовит договор с юристом (АЛЬФА).</div>
+                <div class="stage-participants"><span class="participant"><span class="dot" style="background:#3f799e;"></span>Надежда</span><span class="participant"><span class="dot" style="background:#a889b0;"></span>юрист</span></div>
+            </div>
+        </div>
+        <div class="stage">
+            <div class="stage-number">4</div>
+            <div class="stage-content">
+                <div class="stage-title">Дизайн, контент, афиша</div>
+                <div>РП ставит ТЗ дизайнеру (внешнему или своему), проверяет макеты (логотип, форматы). Готовый контент передаёт Надежде (TicketPro) и Ольге.</div>
+                <div class="stage-participants"><span class="participant"><span class="dot" style="background:#c99d5e;"></span>РП</span><span class="participant"><span class="dot" style="background:#d9e9ff;"></span>Ольга (получает)</span></div>
+            </div>
+        </div>
+        <div class="stage">
+            <div class="stage-number">5</div>
+            <div class="stage-content">
+                <div class="stage-title">Билеты (TicketPro)</div>
+                <div>Надежда самостоятельно заводит событие, загружает контент, выставляет цены (финансовая ответственность).</div>
+                <div class="stage-participants"><span class="participant"><span class="dot" style="background:#3f799e;"></span>Надежда</span></div>
+            </div>
+        </div>
+        <div class="stage">
+            <div class="stage-number">6</div>
+            <div class="stage-content">
+                <div class="stage-title">Рекламная кампания</div>
+                <div>Ольга (по стратегии от Надежды) готовит посты, запускает таргет, розыгрыши. Использует контент от РП.</div>
+                <div class="stage-participants"><span class="participant"><span class="dot" style="background:#d9e9ff;"></span>Ольга</span><span class="participant"><span class="dot" style="background:#3f799e;"></span>Надежда (бюджет/стратегия)</span></div>
+            </div>
+        </div>
+        <div class="stage">
+            <div class="stage-number">7</div>
+            <div class="stage-content">
+                <div class="stage-title">Техподготовка и администрирование</div>
+                <div>Константин назначает техников (БЕТА), проверяет оборудование. Администраторы (Инна, Наталья) готовят реквизит, уборку по задачам от РП.</div>
+                <div class="stage-participants"><span class="participant"><span class="dot" style="background:#5d7e9c;"></span>Константин</span><span class="participant"><span class="dot" style="background:#ffecdd;"></span>Инна/Наталья</span></div>
+            </div>
+        </div>
+        <div class="stage">
+            <div class="stage-number">8</div>
+            <div class="stage-content">
+                <div class="stage-title">Проведение</div>
+                <div>РП встречает коллектив, решает бытовые вопросы, следит за таймингом. Техники работают по задачам Константина. Администраторы на местах.</div>
+                <div class="stage-participants"><span class="participant"><span class="dot" style="background:#c99d5e;"></span>РП</span><span class="participant"><span class="dot" style="background:#e0e7ff;"></span>техники</span><span class="participant"><span class="dot" style="background:#ffecdd;"></span>админы</span></div>
+            </div>
+        </div>
+        <div class="stage">
+            <div class="stage-number">9</div>
+            <div class="stage-content">
+                <div class="stage-title">Закрытие, отчётность</div>
+                <div>РП собирает обратную связь, отмечает в БЕТА «проведено». Надежда с бухгалтером закрывает финансовый цикл в АЛЬФА (акты, оплаты).</div>
+                <div class="stage-participants"><span class="participant"><span class="dot" style="background:#3f799e;"></span>Надежда</span><span class="participant"><span class="dot" style="background:#b0b0b0;"></span>бухгалтер</span><span class="participant"><span class="dot" style="background:#c99d5e;"></span>РП (данные)</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Памятка: границы полномочий (самое важное) -->
+    <hr>
+    <h2>🚧 Границы полномочий (чтобы не пересекались)</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap:1.2rem; margin-top:1.5rem;">
+        <div style="background: #eff4fa; border-radius: 1rem; padding: 1rem;">
+            <span style="font-weight:700;">🔹 Надежда</span>
+            <p style="margin-top:0.3rem; font-size:0.95rem;">Не спускается в операционку. Не бегает за документами и макетами. Не отвечает на вопрос «где розетка». Только стратегия, договоры, TicketPro, гастрольное.</p>
+        </div>
+        <div style="background: #eff4fa; border-radius: 1rem; padding: 1rem;">
+            <span style="font-weight:700;">🔸 РП (рук. проектов)</span>
+            <p style="margin-top:0.3rem; font-size:0.95rem;">Не лезет в финансы. Не меняет цены, не подписывает договоры. Его зона — организация, сбор, координация, проведение.</p>
+        </div>
+        <div style="background: #eff4fa; border-radius: 1rem; padding: 1rem;">
+            <span style="font-weight:700;">🔹 Константин</span>
+            <p style="margin-top:0.3rem; font-size:0.95rem;">Техника — святое. Любые пожелания по свету/звуку — через него. Не занимается бытом и документацией коллективов.</p>
+        </div>
+        <div style="background: #eff4fa; border-radius: 1rem; padding: 1rem;">
+            <span style="font-weight:700;">🔸 Ольга</span>
+            <p style="margin-top:0.3rem; font-size:0.95rem;">Получает стратегию от Надежды, контент — от РП. Не общается напрямую с заказчиком без необходимости.</p>
+        </div>
+    </div>
+
+    <!-- Участие в таблицах: краткая матрица -->
+    <hr>
+    <h2>📊 Матрица доступа: Альфа / Бета</h2>
+    <div class="matrix" style="margin-top:1rem;">
+        <div class="matrix-row"><span class="matrix-role">Надежда</span> <span>АЛЬФА (ведение) + БЕТА (запуск)</span></div>
+        <div class="matrix-row"><span class="matrix-role">Константин</span> <span>АЛЬФА (контроль затрат) + БЕТА (тех. часть)</span></div>
+        <div class="matrix-row"><span class="matrix-role">Анастасия</span> <span>АЛЬФА (финансовый контроль) + БЕТА (общий надзор)</span></div>
+        <div class="matrix-row"><span class="matrix-role">Юрист / бухгалтер</span> <span>только АЛЬФА</span></div>
+        <div class="matrix-row"><span class="matrix-role">РП (рук. проектов)</span> <span>только БЕТА (активное ведение)</span></div>
+        <div class="matrix-row"><span class="matrix-role">Ольга</span> <span>только БЕТА (рекламные колонки)</span></div>
+        <div class="matrix-row"><span class="matrix-role">Администраторы</span> <span>только БЕТА (отметки о готовности)</span></div>
+        <div class="matrix-row"><span class="matrix-role">Техники</span> <span>получают оповещения из БЕТА, но не редактируют</span></div>
+    </div>
+
+    <!-- Короткая инструкция "Как пользоваться" -->
+    <hr>
+    <h2>✅ Коротко: как теперь работаем</h2>
+    <ol style="margin-left: 1.5rem; line-height: 1.8;">
+        <li><strong>Надежда</strong> договаривается → заполняет БЕТУ (дата, тип, стратегия) → назначает РП.</li>
+        <li><strong>РП</strong> берёт контакт, собирает документы/контент, ставит задачи дизайнеру, проверяет макеты → передаёт Надежде (для TicketPro) и Ольге.</li>
+        <li><strong>Надежда</strong> получает гастрольное (через документы от РП), заводит билеты в TicketPro с ценами, вносит договор в АЛЬФУ.</li>
+        <li><strong>Ольга</strong> получает стратегию от Надежды, контент от РП → запускает рекламу.</li>
+        <li><strong>Константин</strong> назначает техников, проверяет оборудование, решает сложные техвопросы.</li>
+        <li><strong>Администраторы (Инна, Наталья)</strong> готовят реквизит, уборку, встречу по задачам РП.</li>
+        <li><strong>В день мероприятия</strong> РП — главный по оргу, техники — по технике, администраторы — по зрителю.</li>
+        <li><strong>После</strong> РП отмечает в БЕТЕ, Надежда с бухгалтером закрывают АЛЬФУ.</li>
+    </ol>
+
+    <!-- Финальный акцент -->
+    <div style="background: #dff0fa; border-radius: 1.5rem; padding: 2rem; text-align: center; margin: 2.5rem 0 1rem;">
+        <p style="font-size: 1.2rem; font-weight: 500;">☕ Единый источник правды — таблицы. Надежда задаёт тон, РП ведёт процесс, Константин отвечает за технику, Ольга — за голос.</p>
+        <p style="margin-top: 0.5rem;">Альфа и Бета не конфликтуют, а дополняют друг друга.</p>
+    </div>
+
+    <div class="footer-note">
+        Версия 2.0 · Для команды духовно‑просветительского центра «Ковчег» · GitHub-документация
+    </div>
+</div>
+</body>
+</html>
